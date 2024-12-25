@@ -56,6 +56,9 @@ router.post('/', upload.single("file"), async (req, res, next) => {
 
         //Step 3: task 3 - insert code here
         let secondChanceItem = req.body ; 
+        secondChanceItem.age_days = Number(secondChanceItem.age_days) ; 
+        secondChanceItem.age_years = Number(secondChanceItem.age_years) ; 
+        secondChanceItem.comments = JSON.parse(secondChanceItem.comments) ; 
 
         //Step 3: task 4 - insert code here
         const lastId = await collection.find().sort({ "id": -1 }).limit(1) ; 
@@ -67,7 +70,7 @@ router.post('/', upload.single("file"), async (req, res, next) => {
 
         secondChanceItem = await collection.insertOne(secondChanceItem) ; 
 
-        res.status(201).json(secondChanceItem.ops[0]) ;
+        res.status(201).json(secondChanceItem) ;
     } catch (e) {
         next(e);
     }
@@ -116,10 +119,30 @@ router.put('/:id', async (req, res, next) => {
         }
         
         //Step 5: task 4 - insert code here
-        secondChanceItem.age_days = req.body.age_days ;
-        secondChanceItem.condition = req.body.condition ;
-        secondChanceItem.description = req.body.description ;
-        secondChanceItem.category = req.body.category ;
+        if (req.body.age_days) {
+            secondChanceItem.age_days = Number(req.body.age_days) ;
+        }
+        if (req.body.condition) {
+            secondChanceItem.condition = req.body.condition ;
+        }
+        if (req.body.description) {
+            secondChanceItem.description = req.body.description ;
+        }
+        if (req.body.category) {
+            secondChanceItem.category = req.body.category ;
+        }
+        if (req.body.name) {
+            secondChanceItem.name = req.body.name ;
+        }
+        if (req.body.zipcode) {
+            secondChanceItem.zipcode = req.body.zipcode ;
+        }
+        if (req.body.image) {
+            secondChanceItem.image = req.body.image ;
+        }
+        if (req.body.comments) {
+            secondChanceItem.comments = req.body.comments ; 
+        }
 
         secondChanceItem.age_years = Number((secondChanceItem.age_days/365).toFixed(1)) ; 
         secondChanceItem.updatedAt = new Date() ; 
@@ -144,7 +167,7 @@ router.put('/:id', async (req, res, next) => {
 });
 
 // Delete an existing item
-router.delete('/:id', async(req, res,next) => {
+router.delete('/:id', async (req, res, next) => {
     try {
         //Step 6: task 1 - insert code here
         const db = await connectToDatabase() ; 
@@ -157,7 +180,7 @@ router.delete('/:id', async(req, res,next) => {
         const secondChanceItem = await collection.findOne({ id: id }) ; 
         if (!secondChanceItem) {
             logger.error("Item not found") ; 
-            return res.json(404).json({ "error": "Item not found" }) ; 
+            return res.status(404).json({ "error": "Item not found" }) ; 
         }
 
         //Step 6: task 4 - insert code here
