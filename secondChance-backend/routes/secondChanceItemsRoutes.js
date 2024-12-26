@@ -21,7 +21,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-
 // Get all secondChanceItems
 router.get('/', async (req, res, next) => {
     logger.info('/ called');
@@ -30,7 +29,7 @@ router.get('/', async (req, res, next) => {
         const db = await connectToDatabase() ; 
 
         //Step 2: task 2 - insert code here
-        const collection = db.collection("secondChanceItems") ; 
+        const collection = db.collection(process.env.MONGO_COLLECTION) ; 
 
         //Step 2: task 3 - insert code here
         const secondChanceItems = await collection.find({}).toArray() ;
@@ -52,7 +51,7 @@ router.post('/', upload.single("file"), async (req, res, next) => {
         const db = await connectToDatabase() ; 
 
         //Step 3: task 2 - insert code here
-        const collection = db.collection("secondChanceItems") ; 
+        const collection = db.collection(process.env.MONGO_COLLECTION) ; 
 
         //Step 3: task 3 - insert code here
         let secondChanceItem = req.body ; 
@@ -83,7 +82,7 @@ router.get('/:id', async (req, res, next) => {
         const db = await connectToDatabase() ; 
 
         //Step 4: task 2 - insert code here
-        const collection = db.collection("secondChanceItems") ; 
+        const collection = db.collection(process.env.MONGO_COLLECTION) ; 
 
         //Step 4: task 3 - insert code here
         const id = req.params.id
@@ -108,7 +107,7 @@ router.put('/:id', async (req, res, next) => {
         const db = await connectToDatabase() ; 
 
         //Step 5: task 2 - insert code here
-        const collection = db.collection("secondChanceItems") ; 
+        const collection = db.collection(process.env.MONGO_COLLECTION) ; 
 
         //Step 5: task 3 - insert code here
         const id = req.params.id ; 
@@ -173,7 +172,7 @@ router.delete('/:id', async (req, res, next) => {
         const db = await connectToDatabase() ; 
 
         //Step 6: task 2 - insert code here
-        const collection = db.collection("secondChanceItems") ; 
+        const collection = db.collection(process.env.MONGO_COLLECTION) ; 
 
         //Step 6: task 3 - insert code here
         const id = req.params.id ; 
