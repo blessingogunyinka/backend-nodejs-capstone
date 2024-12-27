@@ -6,6 +6,82 @@ const logger = require('../logger') ;
 const bcryptjs = require("bcryptjs") ; 
 const jwt = require("jsonwebtoken") ; 
 
+const { body, validationResult } = require("express-validator") ; 
+
+
+router.put("/update", async (req, res) => {
+
+    // Task 2: Validate the input using `validationResult` and return an appropriate message if you detect an error
+    try {
+        
+        const validationErrors = validationResult(req) ; 
+
+        if (!validationErrors.isEmpty()) {
+            logger.error("Update request has validation errors!", validationErrors.array()) ; 
+            return res.status(400).json({ errors: validationErrors.array() }) ; 
+        }
+
+        // Task 3: Check if `email` is present in the header and throw an appropriate error message if it is not present
+
+        const email = req.headers.email ; 
+
+        if (!email) {
+            logger.error("Email is not present in the request headers.") ; 
+            return res.status(400).json({ error: "Email is not present in the request headers." }) ; 
+        }
+
+        // Task 4: Connect to MongoDB
+
+        const db = await connectToDatabase() ;
+        
+        const collection = db.collection("users") ;
+
+        // Task 5: Find the user credentials in database
+
+        const existingUser = await collection.findOne({ email: email }) ; 
+
+        existingUser.updatedAt = new Date() ;
+
+        // Task 6: Update the user credentials in the database
+
+        if (req.body.firstName) {
+            existingUser.firstName = req.body.firstName ; 
+        }
+
+        if (req.body.lastName) {
+            existingUser.lastName = req.body.lastName ; 
+        }
+
+        if (req.body.password) {
+            const salt = await bcryptjs.genSalt(10) ; 
+            const hash = await bcryptjs.hash(req.body.password, salt) ; 
+            existingUser.password = hash ; 
+        }
+
+        const updatedUser = await collection.findOneAndUpdate(
+            { email },
+            { $set: existingUser },
+            { returnDocument: "after" }
+        ) ; 
+
+        // Task 7: Create JWT authentication with `user._id` as a payload using the secret key from the .env file
+
+        const payload = {
+            user: { id: updatedUser._id.toString() }
+        }
+
+        const authtoken = jwt.sign(payload, process.env.JWT_SECRET) ; 
+
+        res.json({ authtoken }) ;
+        
+    } catch (e) {
+
+        return res.status(500).send('Internal server error');
+
+    }
+
+}) ;
+
 
 router.post("/register", async (req, res) => {
 
@@ -50,7 +126,7 @@ router.post("/register", async (req, res) => {
             user: { id: newUser.insertedId } 
         } ; 
 
-        const token = jwt.sign(payload, process.env.JWT_SECRET) ; 
+        const authtoken = jwt.sign(payload, process.env.JWT_SECRET) ; 
 
         // Task 7: Log the successful registration using the logger
 
@@ -58,7 +134,7 @@ router.post("/register", async (req, res) => {
 
         // Task 8: Return the user email and the token as a JSON
 
-        res.status(200).json({ token: token, email: req.body.email }) ; 
+        res.status(200).json({ authtoken: authtoken, email: req.body.email }) ; 
 
     } catch (e) {
         console.log("Error: ", e) ; 
@@ -66,5 +142,6 @@ router.post("/register", async (req, res) => {
     }
 
 }) ;
+
 
 module.exports = router ;
