@@ -184,7 +184,7 @@ router.post("/login", async (req, res) => {
     
             const authtoken = jwt.sign(payload, process.env.JWT_SECRET) ; 
     
-            res.json({ authtoken, name: userName, email: userEmail }) ;
+            res.json({ authtoken, userName, userEmail }) ;
 
             // Task 7: Send appropriate message if the user is not found
         } else {

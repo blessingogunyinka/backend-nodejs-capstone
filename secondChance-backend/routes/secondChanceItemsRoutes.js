@@ -57,7 +57,8 @@ router.post('/', upload.single("file"), async (req, res, next) => {
         let secondChanceItem = req.body ; 
         secondChanceItem.age_days = Number(secondChanceItem.age_days) ; 
         secondChanceItem.age_years = Number(secondChanceItem.age_years) ; 
-        secondChanceItem.comments = JSON.parse(secondChanceItem.comments) ; 
+        // secondChanceItem.comments = JSON.parse(secondChanceItem.comments) ; 
+        secondChanceItem.comments = secondChanceItem.comments ; 
 
         //Step 3: task 4 - insert code here
         const lastId = await collection.find().sort({ "id": -1 }).limit(1) ; 
