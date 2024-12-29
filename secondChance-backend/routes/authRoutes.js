@@ -1,15 +1,15 @@
-const express = require("express") ;
-const router = express.Router() ;
-const connectToDatabase = require("../models/db") ;
-const logger = require('../logger') ;
+const express = require('express')
+const router = express.Router()
+const connectToDatabase = require('../models/db')
+const logger = require('../logger')
 
-const bcryptjs = require("bcryptjs") ; 
-const jwt = require("jsonwebtoken") ; 
+const bcryptjs = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
-const { body, validationResult } = require("express-validator") ; 
+const { body, validationResult } = require('express-validator')
 
 
-router.put("/update", async (req, res) => {
+router.put('/update', async (req, res) => {
 
     // Task 2: Validate the input using `validationResult` and return an appropriate message if you detect an error
     try {
@@ -82,8 +82,7 @@ router.put("/update", async (req, res) => {
 
 }) ;
 
-
-router.post("/register", async (req, res) => {
+router.post('/register', async (req, res) => {
 
     try {
 
@@ -143,8 +142,7 @@ router.post("/register", async (req, res) => {
 
 }) ;
 
-
-router.post("/login", async (req, res) => {
+router.post('/login', async (req, res) => {
 
     try {
 
