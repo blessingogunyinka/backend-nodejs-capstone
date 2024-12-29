@@ -162,7 +162,7 @@ router.post('/login', async (req, res) => {
       const passwordMatch = await bcryptjs.compare(req.body.password, userLoggingIn.password)
 
       if (!passwordMatch) {
-          logger.error('The passwords don't match!')
+          logger.error('The passwords dont match!')
           return res.status(404).json({ error: 'Incorrect password' })              
       }
 
