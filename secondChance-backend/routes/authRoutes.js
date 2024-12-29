@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken')
 const { validationResult } = require('express-validator')
 
 router.put('/update', async (req, res) => {
-
+  
   // Task 2: Validate the input using `validationResult` and return an appropriate message if you detect an error
   
   try {
@@ -22,8 +22,8 @@ router.put('/update', async (req, res) => {
 
     // Task 3: Check if `email` is present in the header and throw an appropriate error message if it is not present
 
-    const email = req.headers.email 
-
+    const email = req.headers.email
+    
     if (!email) {
       logger.error('Email is not present in the request headers.')
       return res.status(400).json({ error: 'Email is not present in the request headers.' })
@@ -60,7 +60,7 @@ router.put('/update', async (req, res) => {
     const updatedUser = await collection.findOneAndUpdate(
       { email },
       { $set: existingUser },
-      { returnDocument: "after" }
+      { returnDocument: 'after' }
     )
 
     // Task 7: Create JWT authentication with `user._id` as a payload using the secret key from the .env file
@@ -72,17 +72,15 @@ router.put('/update', async (req, res) => {
     const authtoken = jwt.sign(payload, process.env.JWT_SECRET)
 
     res.json({ authtoken })
-      
   } catch (e) {
     return res.status(500).send('Internal server error')
   }
 
-}) ;
+})
 
 router.post('/register', async (req, res) => {
 
   try {
-
     // Task 1: Connect to `secondChance` in MongoDB through `connectToDatabase` in `db.js`.
 
     const db = await connectToDatabase()
@@ -114,13 +112,13 @@ router.post('/register', async (req, res) => {
       lastName: req.body.lastName,
       password: hash,
       createdAt: new Date()
-    }) ; 
+    })
 
     // Task 6: Create JWT authentication if passwords match with user._id as payload
 
     const payload = { 
       user: { id: newUser.insertedId } 
-    } ; 
+    }
 
     const authtoken = jwt.sign(payload, process.env.JWT_SECRET)
 
@@ -131,18 +129,16 @@ router.post('/register', async (req, res) => {
     // Task 8: Return the user email and the token as a JSON
 
     res.status(200).json({ authtoken: authtoken, email: req.body.email })
-
   } catch (e) {
     console.log('Error: ', e)
     return res.status(500).send('Internal server error')
   }
 
-}) ;
+})
 
 router.post('/login', async (req, res) => {
 
   try {
-
     // Task 1: Connect to `secondChance` in MongoDB through `connectToDatabase` in `db.js`.
     
     const db = await connectToDatabase()
@@ -186,10 +182,9 @@ router.post('/login', async (req, res) => {
       logger.error('User was not found')
       return res.status(404).json({ error: 'User was not found' })
     }
-
   } catch (e) {
     return res.status(500).send('Internal server error')
   }
-}) ; 
+}) 
 
-module.exports = router ;
+module.exports = router 
